@@ -1,20 +1,30 @@
 version: '3.5'
-
 services:
   server:
-    image: cortezaproject/corteza:${VERSION}
+    image: 'cortezaproject/corteza:${VERSION}'
     restart: always
-    env_file: [ .env ]
-    depends_on: [ db ]
-    ports: [ "127.0.0.1:18080:80" ]
+    env_file:
+      - .env
+    depends_on:
+      - db
+    # IMPORTANTE: Eliminamos el 127.0.0.1 y el puerto 18080
+    ports:
+      - "80"
 
   db:
-    
-    image: postgres:13
+    image: 'postgres:13'
     restart: always
-    healthcheck: { test: ["CMD-SHELL", "pg_isready -U corteza"], interval: 10s, timeout: 5s, retries: 5 }
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U corteza"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
-      - "dbdata:/var/lib/postgresql/data"
+      - 'dbdata:/var/lib/postgresql/data'
     environment:
-      POSTGRES_USER:     corteza
+      POSTGRES_USER: corteza
       POSTGRES_PASSWORD: corteza
+      POSTGRES_DB: corteza
+
+volumes:
+  dbdata:
